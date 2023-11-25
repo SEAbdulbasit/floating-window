@@ -1,32 +1,72 @@
-// Add compose gradle plugin
-plugins {
-    kotlin("multiplatform") version "1.5.31"
-    id("org.jetbrains.compose") version "1.0.0-beta1"
-}
-group = "com.theapache64"
-version = "1.0.0-alpha01"
+import org.jetbrains.compose.ComposeExtension
 
-// Add maven repositories
-repositories {
-    mavenCentral()
-    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+plugins {
+    kotlin("multiplatform")
+    id("org.jetbrains.compose")
 }
 
 kotlin {
-    js(IR) {
+//    js(IR) {
+//        moduleName = "floatingwindow"
+//        browser {
+//            commonWebpackConfig {
+//                outputFileName = "floatingwindow.js"
+//            }
+//        }
+//        binaries.executable()
+//    }
+    wasmJs {
+        moduleName = "floatingwindow"
         browser()
         binaries.executable()
     }
+
     sourceSets {
-        val jsMain by getting {
+//        val jsMain by getting {
+//            dependencies {
+//                implementation(compose.runtime)
+//                implementation(compose.ui)
+//                implementation(compose.foundation)
+//                implementation(compose.material)
+//                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+//                implementation(compose.components.resources)
+//            }
+//        }
+        val wasmJsMain by getting {
             dependencies {
-                implementation(compose.web.core)
                 implementation(compose.runtime)
+                implementation(compose.ui)
+                implementation(compose.foundation)
+                implementation(compose.material)
+                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+                implementation(compose.components.resources)
             }
         }
     }
 }
-// Workaround for https://youtrack.jetbrains.com/issue/KT-49124
-rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
-    versions.webpackCli.version = "4.10.0"
+
+compose.experimental {
+    web.application {}
 }
+
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        mavenLocal()
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/wasm/experimental")
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/")
+    }
+
+    afterEvaluate {
+        extensions.findByType(ComposeExtension::class.java)?.apply {
+            val composeCompilerVersion = project.property("compose.compiler.version") as String
+            kotlinCompilerPlugin.set(composeCompilerVersion)
+            val kotlinVersion = project.property("kotlin.version") as String
+            kotlinCompilerPluginArgs.add("suppressKotlinVersionCompatibilityCheck=$kotlinVersion")
+        }
+    }
+}
+

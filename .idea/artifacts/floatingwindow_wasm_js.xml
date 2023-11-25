@@ -1,0 +1,6 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="floatingwindow-wasm-js">
+    <output-path>$PROJECT_DIR$/build/libs</output-path>
+    <root id="archive" name="floatingwindow-wasm-js.jar" />
+  </artifact>
+</component>
