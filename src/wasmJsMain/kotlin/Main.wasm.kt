@@ -1,11 +1,10 @@
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Text
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -35,38 +34,42 @@ fun main() {
             window.requestAnimationFrame(::positionElem)
         }
         window.requestAnimationFrame(::positionElem)
-        Canvas(
-            modifier = Modifier.size(680.dp, 480.dp),
-            onDraw = {
-                val width = size.width.toFloat()
-                val height = size.height.toFloat()
+        Column {
+            Text(
+                text = "Window.screenLeft: ${screenLeft.value.toInt()}, Window.screenTop: ${screenTop.value.toInt()}",
+                modifier = Modifier.padding(16.dp)
+            )
 
-                if (initialLeft.value == 0f) {
-                    initialLeft.value = window.screenX.toFloat()
-                    initialTop.value = window.screenY.toFloat()
+            Canvas(
+                modifier = Modifier.size(680.dp, 480.dp),
+                onDraw = {
+                    val width = size.width.toFloat()
+                    val height = size.height.toFloat()
+
+                    if (initialLeft.value == 0f) {
+                        initialLeft.value = window.screenX.toFloat()
+                        initialTop.value = window.screenY.toFloat()
+                    }
+
+                    val leftUpdate = initialLeft.value - screenLeft.value
+                    val topUpdate = initialTop.value - screenTop.value
+
+                    drawRect(color = Color.Black, size = Size(width, height))
+                    clipRect(
+                        left = 0f,
+                        top = 0f,
+                        right = width,
+                        bottom = height
+                    ) {
+                        drawCircle(
+                            color = circleColor,
+                            radius = circleRadius,
+                            center = Offset(leftUpdate + (width / 2), topUpdate + (height / 2) + 35)
+                        )
+                    }
                 }
-
-                val leftUpdate = initialLeft.value - screenLeft.value
-                val topUpdate = initialTop.value - screenTop.value
-
-                drawRect(color = Color.Black, size = Size(width, height))
-                clipRect(
-                    left = 0f,
-                    top = 0f,
-                    right = width,
-                    bottom = height
-                ) {
-                    drawCircle(
-                        color = circleColor,
-                        radius = circleRadius,
-                        center = Offset(leftUpdate + (width / 2), topUpdate + (height / 2) + 35)
-                    )
-                }
-            }
-        )
-
-
-        Text("Window.screenLeft: ${screenLeft.value.toInt()}, Window.screenTop: ${screenTop.value.toInt()}")
+            )
+        }
     }
 }
 
