@@ -1,0 +1,1 @@
+(this.webpackChunkfloatingwindow=this.webpackChunkfloatingwindow||[]).push([[592],{592:()=>{}}]);
