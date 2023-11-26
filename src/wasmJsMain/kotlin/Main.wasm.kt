@@ -19,7 +19,7 @@ import kotlinx.browser.window
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     CanvasBasedWindow("Floating Window") {
-        val circleRadius = 50f // Circle radius
+        val circleRadius = 100f // Circle radius
         val circleColor = Color.Blue // Circle color
 
         val initialLeft = remember { mutableStateOf(0f) }
